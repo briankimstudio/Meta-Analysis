@@ -11,7 +11,7 @@ Tutorial on how to conduct meta analysis in R
   - **forest()**
 
 - Heterogeneity. Cochrane Q(p<0.1). Higgins I2
-  - **metareg()**
+  - **metareg()**, **bubble()**
   
 - Publication bias. 
   - Funnel plot. **funnel()**
