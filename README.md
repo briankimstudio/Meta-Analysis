@@ -1,19 +1,29 @@
-# Meta Analysis
+## Tutorial on Meta-analysis in R
 
-Tutorial on how to conduct meta analysis in R
+- Effect size.
 
-- Effect size. 
-
-- SMD. Cohen's d. Hedges' g
+- SMD
+  - Cohen's d
+  - Hedges' g
   - **metacont()**
 
-- Forest plot. Fixed effect model. Random effect model.
-  - **forest()**
+- Oeverall
+  - Fixed effect model
+  - Random effect model (Generally, CI is wider than Fixed effect model)
+  - Forest plot
+    - **forest()**
 
-- Heterogeneity. Cochrane Q(p<0.1). Higgins I2
+- Heterogeneity. 
+  - Cochrane Q(p<0.1)
+    - H0 : Same
+    - H1 : Different
+  - Higgins I2
   - **metareg()**, **bubble()**
-  
-- Publication bias. 
-  - Funnel plot. **funnel()**
-  - Egger's test. **metabias()**
-  - Begg's test. **metabias()**
+
+- Publication bias.
+  - Funnel plot 
+    - **funnel()**
+  - Egger's test 
+    - **metabias()**
+  - Begg's test 
+    - **metabias()**
