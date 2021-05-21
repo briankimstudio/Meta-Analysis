@@ -27,7 +27,7 @@ library(meta)
 
 #### Step 2. Load data
 
-Download [sample_data.csv](https://raw.githubusercontent.com/briankimstudio/Meta-Analysis/main/sample_data.csv) from repository.
+Download [sample_data.csv](https://raw.githubusercontent.com/briankimstudio/Meta-Analysis/main/sample_data.csv) from repository into project folder.
 
 ```{r}
 data_con <- read.csv("sample_data.csv", header=TRUE)
