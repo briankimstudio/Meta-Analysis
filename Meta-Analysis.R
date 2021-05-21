@@ -7,15 +7,20 @@ library(meta)
 #연속형(continuous data) 예제자료
 #####################################
 data_con <- read.csv("shim_con.csv", header=TRUE)
-
+show(data_con)
+data_con <- data_con[,c(1:7,13)]
+show(data_con)
 #종합 효과크기
 ma_con <- metacont(n1, m1, s1, n2, m2, s2, sm="SMD", method.smd="Hedges", study,
                     byvar=g ,data=data_con)
+ma_con <- metacont(n1, m1, s1, n2, m2, s2, sm="SMD", method.smd="Hedges", study,
+                    data=data_con)
 print(ma_con , digits=3)
 
 #Forest plot(숲 그림)
 forest(ma_con, comb.fixed=TRUE, comb.random=TRUE,digits=3,
        rightcols=c("effect", "ci"))
+forest(ma_con, comb.fixed=TRUE, comb.random=TRUE,digits=3)
 
 #이질성 원인파악 : meta-regression
 metareg(ma_con,g, method.tau="REML", digits=3)

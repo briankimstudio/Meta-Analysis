@@ -1,0 +1,212 @@
+---
+title: "Tutorial on Meta-analysis in R"
+author: "Brian"
+date: "5/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Purpose
+
+Analyze results from multiple research then generate larger scale results.
+
+#### Required Packages
+
+For conducting the Meta-analysis in R, we need to use a package such as **meta**, **metafor**, and **rmeta**, etc. 
+
+We use **meta** package for this tutorial.
+
+#### Step 1. Load package
+
+```{r message=FALSE}
+library(meta)
+```
+
+#### Step 2. Load data
+
+```{r}
+data_con <- read.csv("sample_data.csv", header=TRUE)
+```
+
+Data
+
+For meta-analysis, data for experiment group and control group are required. Specifically, number of samples, mean, and standard deviation for each group are necessary.
+
+n1,m1,s1 are data for experimental group and n2,m2,s2 for control group. g is for subgroup testing.
+
+- n: number of samples
+- m: mean
+- s: standard deviation
+
+```{r echo=FALSE}
+knitr::kable(
+  data_con, booktabs = TRUE
+)
+```
+
+#### Step 3. Run Meta-analysis
+
+We used SMD and Hedges method.
+
+- sm: 
+  - MD (mean difference)
+  - **SMD (standardized mean difference)**
+  - ROM (ratio of means)
+  
+- method.smd: 
+  - **Hedges**
+  - Cohen
+  - Glass
+
+Additionally, g is used for subgroup analysis. 
+
+```{r}
+ma_con <- metacont(n.e=n1, mean.e=m1, sd.e=s1, n.c=n2, mean.c=m2, sd.c=s2, sm="SMD", method.smd="Hedges", study,
+                    byvar=g ,data=data_con)
+print(ma_con , digits=3)
+
+```
+
+The results consist of three parts: SMD, heterogeneity, subgroup.
+
+#### SMD
+
+It estimated two models: Fixed effect model and random effects model. 
+SMD of fixed effect model is -1.465 and random effects model is -1.973. In general,
+CI of random effects model is wider than CI of fixed effect model.
+
+- H0: Intervention is not effective(No difference)
+- H1: Intervention is effective
+
+For both fixed effect model and random effects model, the p-value is less than 0.001.
+
+#### Heterogeneity
+
+Regarding test of heterogeneity, 
+
+- H0: Heterogeneity does not exist
+- H1: Heterogeneity exist
+
+I^2 is 82.7%, p-value of Q is less than 0.001. It indicates that heterogeneity exist. 
+In general, random effects model is preferred when heterogeneity exist.
+
+#### Forest plot.
+
+Forest plot is a visual tool to check heterogeneity among studies. Additionally, it shows the overall effect size using diamond symbol in the plot.
+
+```{r fig.width=12}
+forest(ma_con, comb.fixed=TRUE, comb.random=TRUE,digits=3,
+      rightcols=c("effect", "ci"))
+```
+
+Meta-regression is a statistical tool to check what causes heterogeneity.
+
+- H0: Heterogeneity does not exist
+- H1: Heterogeneity exist
+
+- method.tau (method to estimate the between-study variance tau-squared)
+  - REML (restricted maximum likelihood)
+  - ML (maximum likelihood)
+
+```{r}
+metareg(ma_con, g, method.tau="REML", digits=3)
+```
+
+#### Test of Moderators (coefficient 2)
+
+- H0: No difference(NO moderation effect)
+- H1: Different(Moderation effect)
+
+The p-value of 'Test of Moderators' is 0.711(>0.05), which indicates g does not moderate.
+
+Bubble plot
+
+The results of meta-regression analysis is presented in bubble plot. The line in the plot represent regression result.
+
+```{r}
+bubble(metareg(ma_con, g, method.tau="REML"))
+```
+
+#### Publication bias
+
+#### Statistical method: Funnel plot
+
+Funnel plot is a visual tool to determine whethere there is a publication bias or not. 
+If the data in the funnel is not symmetric, it indicates that publication bias may exist.
+
+```{r}
+funnel(ma_con, comb.fixed=TRUE, comb.random=FALSE)
+```
+
+#### Statistical methods: Egger's test, Begg's test
+
+Run Meta-analysis again without subgroup. The results is used for testing publication bias.
+
+```{r}
+ma_con <- metacont(n1, m1, s1, n2, m2, s2, sm="SMD", method.smd="Hedges", 
+                   study,data=data_con)
+```
+
+#### Egger's test
+
+- H0: Publication bias does not exist
+- H1: Publication bias exist
+
+```{r}
+metabias(ma_con, method.bias="linreg")
+```
+
+The p-value is less than 0.001, which indicates H0 is rejected.
+
+#### Begg's test
+
+- H0: Publication bias does not exist
+- H1: Publication bias exist
+
+```{r}
+metabias(ma_con, method.bias="rank")
+```
+
+The p-value(0.0024) is less than 0.05, which indicates H0 is rejected.
+
+#### What if publication bias exist?
+
+- Add more data, then analyze again.
+- Run sensitivity analysis
+
+#### Summary
+
+- Effect size.
+
+- SMD
+  - Cohen's d
+  - Hedges' g
+  - **metacont()**
+
+- Oeverall
+  - Fixed effect model
+  - Random effect model (Generally, CI is wider than Fixed effect model)
+  - Forest plot
+    - **forest()**
+
+- Heterogeneity. 
+  - Cochrane Q(p<0.1)
+    - H0 : Same
+    - H1 : Different
+  - Higgins I2
+  - **metareg()**, **bubble()**
+
+- Publication bias.
+  - Funnel plot 
+    - **funnel()**
+  - Egger's test 
+    - **metabias()**
+  - Begg's test 
+    - **metabias()**
+
+#### References
+
+- Intervention Meta-analysis: Application and Practice using R software
