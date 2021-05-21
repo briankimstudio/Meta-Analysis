@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #### Purpose
 
-Analyze results from multiple research then generate larger scale results.
+Analyze results from multiple studies for generating results with larger samples.
 
 #### Required Packages
 
